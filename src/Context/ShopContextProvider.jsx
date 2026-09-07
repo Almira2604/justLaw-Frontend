@@ -17,21 +17,31 @@ export const ShopContextProvider = ({ children }) => {
   });
 
   const currency = "₦";
-  const API_URL = "http://127.0.0.1:8000/api";
+
+  // Railway Backend API
+  const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "https://justlaw-backend-production.up.railway.app/api";
 
   // Fetch all books
   useEffect(() => {
     fetch(`${API_URL}/books/`)
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setBooks(data);
+        if (Array.isArray(data)) {
+          setBooks(data);
+        }
       })
-      .catch((err) => console.error("Error fetching books:", err));
-  }, []);
+      .catch((err) => {
+        console.error("Error fetching books:", err);
+      });
+  }, [API_URL]);
 
   // Fetch cart
   const fetchCart = async () => {
-    const activeUser = user || JSON.parse(localStorage.getItem("user") || "null");
+    const activeUser =
+      user || JSON.parse(localStorage.getItem("user") || "null");
+
     const userId = activeUser?.id || activeUser?.user?.id;
 
     if (!userId) {
@@ -41,6 +51,7 @@ export const ShopContextProvider = ({ children }) => {
 
     try {
       const res = await fetch(`${API_URL}/cart/?user=${userId}`);
+
       if (res.ok) {
         const data = await res.json();
         setCartItems(Array.isArray(data) ? data : []);
@@ -58,7 +69,9 @@ export const ShopContextProvider = ({ children }) => {
 
   // Add to Cart
   const addToCart = async (bookId) => {
-    const activeUser = user || JSON.parse(localStorage.getItem("user") || "null");
+    const activeUser =
+      user || JSON.parse(localStorage.getItem("user") || "null");
+
     const userId = activeUser?.id || activeUser?.user?.id;
 
     if (!userId) {
@@ -69,7 +82,9 @@ export const ShopContextProvider = ({ children }) => {
     try {
       const res = await fetch(`${API_URL}/cart/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           user: userId,
           book: bookId,
@@ -88,9 +103,16 @@ export const ShopContextProvider = ({ children }) => {
     }
   };
 
+  // Get total number of items in cart
   const getCartCount = () => {
-    if (!Array.isArray(cartItems)) return 0;
-    return cartItems.reduce((total, item) => total + (Number(item.quantity) || 1), 0);
+    if (!Array.isArray(cartItems)) {
+      return 0;
+    }
+
+    return cartItems.reduce(
+      (total, item) => total + (Number(item.quantity) || 1),
+      0
+    );
   };
 
   return (
@@ -113,4 +135,5 @@ export const ShopContextProvider = ({ children }) => {
     </ShopContext.Provider>
   );
 };
+
 export default ShopContextProvider;
