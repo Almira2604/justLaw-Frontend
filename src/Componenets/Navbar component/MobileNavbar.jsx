@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
+import { IoPersonOutline } from "react-icons/io5";
 
 const MobileNavbar = ({ setIsNavbarOpen, navItems }) => {
   return (
@@ -39,6 +40,16 @@ const MobileNavbar = ({ setIsNavbarOpen, navItems }) => {
           {item.name}
         </NavLink>
       ))}
+
+      {/* Login */}
+      <NavLink
+        to="/login"
+        onClick={() => setIsNavbarOpen(false)}
+        className="flex items-center gap-2 mt-2 px-6 py-3 bg-[#F8F5EF] text-[#0B1F3A] text-sm font-semibold rounded-md hover:bg-white transition-colors"
+      >
+        <IoPersonOutline className="text-base" />
+        Login
+      </NavLink>
 
       {/* Decorative line */}
       <div className="absolute bottom-10 w-16 h-px bg-[#F8F5EF]/40" />
