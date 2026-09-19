@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import Logo from "../../assets/Images/Logo.png";
+import Logo from "../../assets/Images/logo.png";
 import { FiMenu } from "react-icons/fi";
 import { FaShoppingCart, FaTimes } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
