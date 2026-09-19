@@ -8,7 +8,7 @@ import Cart from "./pages/Cart";
 import Contact from "./pages/Contact";
 import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/Login";
-import Signup from "./pages/signUp";
+import Signup from "./pages/Signup";
 import Footer from "./Componenets/Footer component/Footer";
 
 function App() {
