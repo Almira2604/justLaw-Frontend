@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 const Hero = () => {
-  const { books, API_URL } = useContext(ShopContext);
+  const { books } = useContext(ShopContext);
 
   const [popularBooks, setPopularBooks] = useState([]);
 
@@ -25,7 +25,7 @@ const Hero = () => {
     return newArr;
   };
 
-  // Select books from the Django API
+  // Select random books from the Django API
   useEffect(() => {
     if (!books || books.length === 0) {
       setPopularBooks([]);
@@ -36,9 +36,6 @@ const Hero = () => {
 
     setPopularBooks(randomBooks);
   }, [books]);
-
-  // Django media base URL
-  const API_BASE = "http://127.0.0.1:8000";
 
   const defaultCover =
     "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600";
@@ -118,7 +115,9 @@ const Hero = () => {
 
               {popularBooks.map((book) => {
 
+                // Use the correct local cover first
                 const rawImage =
+                  book.localCover ||
                   book.cover_image ||
                   book.image ||
                   book.cover;
@@ -126,7 +125,7 @@ const Hero = () => {
                 const imageUrl = rawImage
                   ? rawImage.startsWith("http")
                     ? rawImage
-                    : `${API_BASE}${rawImage}`
+                    : rawImage
                   : defaultCover;
 
                 return (

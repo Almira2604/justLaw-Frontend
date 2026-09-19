@@ -16,10 +16,47 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = API_URL.replace("/api", "");
 
   const defaultCover =
     "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600";
+
+  // Local covers stored in the frontend public folder
+  const coverMap = {
+    "Business law and practice": "/book-covers/business_law.jpeg",
+
+    "Company law for undergraduate": "/book-covers/company_law.jpg",
+
+    "Administrative Law in Nigeria":
+      "/book-covers/Administrative_law_in_nigeria.jfif",
+
+    "Nigerian Law of Contract":
+      "/book-covers/Nigeria_law_of_contract.jfif",
+
+    "Constitutional Law in Nigeria":
+      "/book-covers/Constitutional_law.jpg",
+
+    "Corporate Law Practice in Nigeria":
+      "/book-covers/Law_in_practice.jfif",
+
+    "Criminal Law in Nigeria":
+      "/book-covers/criminal_law.jfif",
+
+    "Environmental Law and Practice in Nigeria":
+      "/book-covers/environmenta_law.jpg",
+
+    "Family Law in Nigeria":
+      "/book-covers/family_law.jfif",
+
+    "Intellectual Property Law in Nigeria":
+      "/book-covers/intellectual_law.jfif",
+
+    "The Law of Real Property in Nigeria":
+      "/book-covers/property_law.jpg",
+
+    "Tax Law and Practice in Nigeria":
+      "/book-covers/tax_law.jfif",
+  };
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -94,7 +131,11 @@ const ProductDetails = () => {
   // -----------------------------
   // IMAGE
   // -----------------------------
+
+  const localCover = coverMap[book.title];
+
   const rawImage =
+    localCover ||
     book.cover_image ||
     book.image ||
     book.cover;
@@ -102,7 +143,7 @@ const ProductDetails = () => {
   const imageUrl = rawImage
     ? rawImage.startsWith("http")
       ? rawImage
-      : `${API_BASE}${rawImage}`
+      : rawImage
     : defaultCover;
 
   // -----------------------------

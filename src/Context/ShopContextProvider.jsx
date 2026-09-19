@@ -23,13 +23,41 @@ export const ShopContextProvider = ({ children }) => {
     import.meta.env.VITE_API_URL ||
     "https://justlaw-backend-production.up.railway.app/api";
 
+  // Local book covers
+  const coverMap = {
+    "Business law and practice": "/book-covers/business_law.jpeg",
+    "Company law for undergraduate": "/book-covers/company_law.jpg",
+    "Administrative Law in Nigeria":
+      "/book-covers/Administrative_law_in_nigeria.jfif",
+    "Nigerian Law of Contract":
+      "/book-covers/Nigeria_law_of_contract.jfif",
+    "Constitutional Law in Nigeria":
+      "/book-covers/Constitutional_law.jpg",
+    "Corporate Law Practice in Nigeria":
+      "/book-covers/Law_in_practice.jfif",
+    "Criminal Law in Nigeria": "/book-covers/criminal_law.jfif",
+    "Environmental Law and Practice in Nigeria":
+      "/book-covers/environmenta_law.jpg",
+    "Family Law in Nigeria": "/book-covers/family_law.jfif",
+    "Intellectual Property Law in Nigeria":
+      "/book-covers/intellectual_law.jfif",
+    "The Law of Real Property in Nigeria":
+      "/book-covers/property_law.jpg",
+    "Tax Law and Practice in Nigeria": "/book-covers/tax_law.jfif",
+  };
+
   // Fetch all books
   useEffect(() => {
     fetch(`${API_URL}/books/`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setBooks(data);
+          const booksWithCovers = data.map((book) => ({
+            ...book,
+            localCover: coverMap[book.title] || null,
+          }));
+
+          setBooks(booksWithCovers);
         }
       })
       .catch((err) => {
