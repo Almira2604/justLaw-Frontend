@@ -60,89 +60,68 @@ const Cart = () => {
       );
   };
 
-  // WhatsApp Checkout Handler
-  const handleWhatsAppCheckout = (e) => {
-    e.preventDefault();
 
-    if (cartItems.length === 0) {
-      return;
-    }
+// WhatsApp Checkout Handler
+const handleWhatsAppCheckout = (e) => {
+  e.preventDefault();
 
-    // Check delivery information
-    if (
-      !deliveryInfo.university.trim() ||
-      !deliveryInfo.address.trim() ||
-      !deliveryInfo.phone.trim()
-    ) {
-      alert("Please fill in all campus delivery details.");
-      return;
-    }
+  if (cartItems.length === 0) {
+    return;
+  }
 
-    // Your WhatsApp number
-    const sellerWhatsApp = "2348127059934";
+  // Check delivery information
+  if (
+    !deliveryInfo.university.trim() ||
+    !deliveryInfo.address.trim() ||
+    !deliveryInfo.phone.trim()
+  ) {
+    alert("Please fill in all campus delivery details.");
+    return;
+  }
 
-    // Build the formatted order message
-    let message = `*NEW ORDER - JUSTLAW BOOKSTORE*\n`;
+  // Your WhatsApp number
+  const sellerWhatsApp = "2348127059934";
 
-    message += `===================================\n`;
+  // Build the formatted order message
+  let message = `*New Order - JustLaw Bookstore*\n\n`;
 
-    message += `*CUSTOMER DETAILS*\n`;
+  message += `*Customer Details*\n`;
+  message += `• *Name:* ${user?.first_name || ""} ${
+    user?.last_name || ""
+  }\n`;
+  message += `• *Email:* ${user?.email || "N/A"}\n`;
+  message += `• *Phone:* ${deliveryInfo.phone}\n\n`;
 
-    message += `• *Name:* ${
-      user?.first_name || ""
-    } ${user?.last_name || ""}\n`;
+  message += `*Delivery Location*\n`;
+  message += `• *University:* ${deliveryInfo.university}\n`;
+  message += `• *Address:* ${deliveryInfo.address}\n\n`;
 
-    message += `• *Email:* ${
-      user?.email || "N/A"
-    }\n`;
+  message += `*Order Summary*\n`;
 
-    message += `• *Phone:* ${
-      deliveryInfo.phone
-    }\n\n`;
+  cartItems.forEach((item, index) => {
+    const title = getItemTitle(item);
+    const price = getItemPrice(item);
+    const qty = item.quantity || 1;
 
-    message += `*DELIVERY LOCATION*\n`;
+    message += `${index + 1}. *${title}* (x${qty}) - ₦${(
+      price * qty
+    ).toLocaleString()}\n`;
+  });
 
-    message += `• *University:* ${
-      deliveryInfo.university
-    }\n`;
+  message += `\n*Total Amount:* ₦${totalAmount.toLocaleString()}\n\n`;
 
-    message += `• *Address:* ${
-      deliveryInfo.address
-    }\n\n`;
+  message += `Hello JustLaw! I would like to pay for and receive this order at my school address.`;
 
-    message += `===================================\n`;
+  // Encode message for WhatsApp
+  const encodedMessage = encodeURIComponent(message);
 
-    message += `*ORDER SUMMARY*\n`;
+  // Open WhatsApp
+  window.open(
+    `https://wa.me/${sellerWhatsApp}?text=${encodedMessage}`,
+    "_blank"
+  );
+};
 
-    cartItems.forEach((item, index) => {
-      const title = getItemTitle(item);
-      const price = getItemPrice(item);
-      const qty = item.quantity || 1;
-
-      message += `${index + 1}. *${title}* (x${qty}) - ₦${(
-        price * qty
-      ).toLocaleString()}\n`;
-    });
-
-    message += `===================================\n`;
-
-    message += `*TOTAL AMOUNT:* ₦${totalAmount.toLocaleString()}\n`;
-
-    message += `===================================\n\n`;
-
-    message +=
-      `Hello JustLaw! I would like to pay for and receive this order at my school address.`;
-
-    // Encode message for WhatsApp
-    const encodedMessage =
-      encodeURIComponent(message);
-
-    // Open WhatsApp
-    window.open(
-      `https://wa.me/${sellerWhatsApp}?text=${encodedMessage}`,
-      "_blank"
-    );
-  };
 
   // If user isn't logged in
   if (!user) {
