@@ -60,68 +60,90 @@ const Cart = () => {
       );
   };
 
+  // WhatsApp Checkout Handler
+  const handleWhatsAppCheckout = async (e) => {
+    e.preventDefault();
 
-// WhatsApp Checkout Handler
-const handleWhatsAppCheckout = (e) => {
-  e.preventDefault();
+    if (cartItems.length === 0) {
+      return;
+    }
 
-  if (cartItems.length === 0) {
-    return;
-  }
+    // Check delivery information
+    if (
+      !deliveryInfo.university.trim() ||
+      !deliveryInfo.address.trim() ||
+      !deliveryInfo.phone.trim()
+    ) {
+      alert("Please fill in all campus delivery details.");
+      return;
+    }
 
-  // Check delivery information
-  if (
-    !deliveryInfo.university.trim() ||
-    !deliveryInfo.address.trim() ||
-    !deliveryInfo.phone.trim()
-  ) {
-    alert("Please fill in all campus delivery details.");
-    return;
-  }
+    // Your WhatsApp number
+    const sellerWhatsApp = "2348127059934";
 
-  // Your WhatsApp number
-  const sellerWhatsApp = "2348127059934";
+    // Build the formatted order message
+    let message = `*New Order - JustLaw Bookstore*\n\n`;
 
-  // Build the formatted order message
-  let message = `*New Order - JustLaw Bookstore*\n\n`;
+    message += `*Customer Details*\n`;
+    message += `• *Name:* ${user?.first_name || ""} ${
+      user?.last_name || ""
+    }\n`;
+    message += `• *Email:* ${user?.email || "N/A"}\n`;
+    message += `• *Phone:* ${deliveryInfo.phone}\n\n`;
 
-  message += `*Customer Details*\n`;
-  message += `• *Name:* ${user?.first_name || ""} ${
-    user?.last_name || ""
-  }\n`;
-  message += `• *Email:* ${user?.email || "N/A"}\n`;
-  message += `• *Phone:* ${deliveryInfo.phone}\n\n`;
+    message += `*Delivery Location*\n`;
+    message += `• *University:* ${deliveryInfo.university}\n`;
+    message += `• *Address:* ${deliveryInfo.address}\n\n`;
 
-  message += `*Delivery Location*\n`;
-  message += `• *University:* ${deliveryInfo.university}\n`;
-  message += `• *Address:* ${deliveryInfo.address}\n\n`;
+    message += `*Order Summary*\n`;
 
-  message += `*Order Summary*\n`;
+    cartItems.forEach((item, index) => {
+      const title = getItemTitle(item);
+      const price = getItemPrice(item);
+      const qty = item.quantity || 1;
 
-  cartItems.forEach((item, index) => {
-    const title = getItemTitle(item);
-    const price = getItemPrice(item);
-    const qty = item.quantity || 1;
+      message += `${index + 1}. *${title}* (x${qty}) - ₦${(
+        price * qty
+      ).toLocaleString()}\n`;
+    });
 
-    message += `${index + 1}. *${title}* (x${qty}) - ₦${(
-      price * qty
-    ).toLocaleString()}\n`;
-  });
+    message += `\n*Total Amount:* ₦${totalAmount.toLocaleString()}\n\n`;
 
-  message += `\n*Total Amount:* ₦${totalAmount.toLocaleString()}\n\n`;
+    message +=
+      `Hello JustLaw! I would like to pay for and receive this order at my school address.`;
 
-  message += `Hello JustLaw! I would like to pay for and receive this order at my school address.`;
+    // Encode message for WhatsApp
+    const encodedMessage = encodeURIComponent(message);
 
-  // Encode message for WhatsApp
-  const encodedMessage = encodeURIComponent(message);
+    // Open WhatsApp
+    window.open(
+      `https://wa.me/${sellerWhatsApp}?text=${encodedMessage}`,
+      "_blank"
+    );
 
-  // Open WhatsApp
-  window.open(
-    `https://wa.me/${sellerWhatsApp}?text=${encodedMessage}`,
-    "_blank"
-  );
-};
+    // Clear the cart from the backend
+    try {
+      await Promise.all(
+        cartItems.map((item) =>
+          fetch(`${API_URL}/cart/${item.id}/`, {
+            method: "DELETE",
+          })
+        )
+      );
 
+      // Clear the cart in the frontend
+      setCartItems([]);
+
+      // Clear delivery form
+      setDeliveryInfo({
+        university: "",
+        address: "",
+        phone: "",
+      });
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    }
+  };
 
   // If user isn't logged in
   if (!user) {
@@ -309,3 +331,4 @@ const handleWhatsAppCheckout = (e) => {
 };
 
 export default Cart;
+
